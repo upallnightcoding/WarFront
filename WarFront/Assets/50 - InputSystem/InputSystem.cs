@@ -6,13 +6,33 @@ using UnityEngine.InputSystem;
 
 public class InputSystem : MonoBehaviour
 {
+    public static event Action OnFire = delegate { };
+
     private GameInputActions gameInputActions;
 
     private InputAction movement;
 
-    public Vector2 ReadMovement()
+    public InputSystemCmd ReadMovement()
     {
-        return (movement.ReadValue<Vector2>());
+        Vector2 mouse = movement.ReadValue<Vector2>();
+
+        InputSystemCmd command = InputSystemCmd.INPUT_STILL;
+
+        if (mouse.x == 1)
+        {
+            command = InputSystemCmd.INPUT_RIGHT;
+        } 
+        else if (mouse.x == -1)
+        {
+            command = InputSystemCmd.INPUT_LEFT;
+        } 
+        
+        return (command);
+    }
+
+    public Vector2 ReadMousePosition()
+    {
+        return(Mouse.current.position.ReadValue());
     }
 
     private void Awake()
@@ -41,6 +61,6 @@ public class InputSystem : MonoBehaviour
 
     private void DoFire(InputAction.CallbackContext obj)
     {
-        Debug.Log("Fire ...");
+        OnFire.Invoke();
     }
 }
