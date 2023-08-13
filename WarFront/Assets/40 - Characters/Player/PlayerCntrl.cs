@@ -10,6 +10,7 @@ public class PlayerCntrl : MonoBehaviour
     [SerializeField] private LayerMask groundLayerMask;
     [SerializeField] private GameObject testBulletPreFab;
     [SerializeField] private Transform muzzlePoint;
+    [SerializeField] private GameObject targetPointPreFab;
 
     private GameObject crossHair;
 
@@ -33,11 +34,14 @@ public class PlayerCntrl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        InputSystemCmd command = inputSystem.ReadMovement();
+        InputDirective command = inputSystem.ReadMovement();
 
         Vector2 mouse = inputSystem.ReadMousePosition();
-
-        AimWeapon(mouse);
+        
+        if(inputSystem.IsLeftMouseButtonPressed())
+        {
+            ShootWeapon(mouse);
+        }
 
         PlayerMovement(command, Time.deltaTime);
     }
@@ -49,28 +53,33 @@ public class PlayerCntrl : MonoBehaviour
         cntrl.AddForce(50.0f);
     }
 
-    private void AimWeapon(Vector2 mouse)
+    private void ShootWeapon(Vector2 mouse)
     {
         Ray ray = mainCamera.ScreenPointToRay(mouse);
 
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, 10000f, groundLayerMask))
+        if (Physics.Raycast(ray, out hit, 10000f))
         {
-            crossHair.transform.position = hit.point;
+            GameObject target = Instantiate(targetPointPreFab, hit.point, Quaternion.identity);
+
+            GameObject bullet = Instantiate(testBulletPreFab, muzzlePoint.position, Quaternion.identity);
+            bullet.transform.forward = (hit.point - muzzlePoint.position).normalized;
+            TestBulletCntrl cntrl = bullet.GetComponent<TestBulletCntrl>();
+            cntrl.AddForce(500.0f);
         }
     }
 
-    private void PlayerMovement(InputSystemCmd command, float dt)
+    private void PlayerMovement(InputDirective command, float dt)
     {
         switch(command)
         {
-            case InputSystemCmd.INPUT_STILL:
+            case InputDirective.INPUT_STILL:
                 break;
-            case InputSystemCmd.INPUT_LEFT:
+            case InputDirective.INPUT_LEFT:
                 charCntrl.Move(gameObject.transform.right * -gameData.playerSpeed * dt);
                 break;
-            case InputSystemCmd.INPUT_RIGHT:
+            case InputDirective.INPUT_RIGHT:
                 charCntrl.Move(gameObject.transform.right * gameData.playerSpeed * dt);
                 break;
         }

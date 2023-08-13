@@ -461,8 +461,9 @@ MonoBehaviour:
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  testBulletPreFab: {fileID: 2714788092499649222, guid: d1dc9ad99a4cfa6438dd12fe064320f5, type: 3}
+  testBulletPreFab: {fileID: 8821826735788954290, guid: ebb87d098d0a7154d99a1c987d322df9, type: 3}
   muzzlePoint: {fileID: 1305605044}
+  targetPointPreFab: {fileID: 9013613279398110671, guid: 82f4634ede3b7474f94b9768ec21f687, type: 3}
 --- !u!114 &228822961
 MonoBehaviour:
   m_ObjectHideFlags: 0

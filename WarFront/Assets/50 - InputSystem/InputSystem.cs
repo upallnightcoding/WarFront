@@ -12,27 +12,37 @@ public class InputSystem : MonoBehaviour
 
     private InputAction movement;
 
-    public InputSystemCmd ReadMovement()
+    /** 
+     * Mouse Commands
+     */
+
+    public Vector2 ReadMousePosition() => Mouse.current.position.ReadValue();
+
+    public bool IsLeftMouseButtonPressed() => Mouse.current.leftButton.wasPressedThisFrame;
+
+    public bool IsRightMouseButtonPressed() => Mouse.current.rightButton.wasPressedThisFrame;
+
+    public InputDirective ReadMovement()
     {
         Vector2 mouse = movement.ReadValue<Vector2>();
 
-        InputSystemCmd command = InputSystemCmd.INPUT_STILL;
+        InputDirective command = InputDirective.INPUT_STILL;
 
         if (mouse.x == 1)
         {
-            command = InputSystemCmd.INPUT_RIGHT;
+            command = InputDirective.INPUT_RIGHT;
         } 
         else if (mouse.x == -1)
         {
-            command = InputSystemCmd.INPUT_LEFT;
+            command = InputDirective.INPUT_LEFT;
         } 
         
         return (command);
     }
 
-    public Vector2 ReadMousePosition()
+    private void DoFire(InputAction.CallbackContext obj)
     {
-        return(Mouse.current.position.ReadValue());
+        OnFire.Invoke();
     }
 
     private void Awake()
@@ -57,10 +67,5 @@ public class InputSystem : MonoBehaviour
         gameInputActions.Player.Fire.Disable();
 
         gameInputActions.Player.Fire.performed -= DoFire;
-    }
-
-    private void DoFire(InputAction.CallbackContext obj)
-    {
-        OnFire.Invoke();
     }
 }
